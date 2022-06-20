@@ -1,8 +1,10 @@
 
 
 import { Container } from 'inversify';
-import { UserCreator, UserCreatorUseCase } from './application/userCreatorUseCase';
+import { UserCreator } from './application';
+import { UserCreatorUseCase } from './domain';
 import { UserRepository } from './domain';
+import { UserValidator } from './infrastruture';
 import { UserMongooseRepository } from './infrastruture/persistence/userMongooseRepository';
 import { UserController } from './infrastruture/rest/userController';
 
@@ -13,6 +15,7 @@ export const bindToContainer = (container: Container) => {
   // UseCase
   container.bind<UserCreatorUseCase>('UserCreator').to(UserCreator);
 
-  // Controller
+  // Rest
   container.bind<UserController>('UserController').to(UserController);
+  container.bind<UserValidator>('UserValidator').to(UserValidator);
 };

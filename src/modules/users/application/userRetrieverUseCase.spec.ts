@@ -1,15 +1,15 @@
-import { UserCreator } from './userCreatorUseCase';
 import { CustomLoggerDouble } from '@shared/logger/test/customLoggerDouble';
 import { UserRepositoryDouble } from '../test/userRepositoryDouble';
+import { UserRetriever } from './userRetrieverUseCase';
 
-describe('Create User', () => {
+describe('User Retriever', () => {
   const logger = new CustomLoggerDouble();
   const userRepository = new UserRepositoryDouble();
 
-  const useCase = new UserCreator(logger, userRepository);
+  const useCase = new UserRetriever(logger, userRepository);
 
   beforeEach(() => {
-    userRepository.insertOne = jest.fn().mockReturnValue("mockUser");
+    userRepository.getOneById = jest.fn().mockReturnValue("mockUser");
     logger.info = jest.fn();
   });
 
@@ -18,15 +18,15 @@ describe('Create User', () => {
     await useCase.invoke(params);
 
     expect(logger.info).toHaveBeenCalledTimes(1);
-    expect(logger.info).toHaveBeenCalledWith('Invoking UserCreator...', params);
+    expect(logger.info).toHaveBeenCalledWith('Invoking UserRetriever...', params);
   });
 
-  it('Create a new user and returns 200', () => {
+  it('Retrieves the user and returns 200', () => {
     // Here goes the implementation of the test
     expect(1).toBe(1);
   });
 
-  it('Try to create a new user and returns 400', () => {
+  it('Return 404 is the user is not found', () => {
     // Here goes the implementation of the test
     expect(1).toBe(1);
   });

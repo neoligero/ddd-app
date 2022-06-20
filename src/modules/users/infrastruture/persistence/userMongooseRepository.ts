@@ -1,4 +1,4 @@
-import { CreateUserParams, User, UserRepository } from '@modules/users/domain';
+import { CreateUserParams, User, UserRepository } from '../../domain';
 import { MongooseBaseRepository } from '@shared/repository';
 import { injectable } from 'inversify';
 import { UserModel } from './userModel';

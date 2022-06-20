@@ -1,10 +1,10 @@
 import { injectable } from "inversify";
 
 @injectable()
-class EmailAdapter {
+export class EmailAdapter {
 
   public async notify(msg: string): Promise<void> {
-    await this.sendMail(msg);
+    return await this.sendMail(msg);
   }
 
   private async sendMail(msg: string) {

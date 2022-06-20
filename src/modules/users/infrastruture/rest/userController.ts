@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Response, Request, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { inject, injectable } from "inversify";
-import { UserCreatorUseCase } from "@modules/users/application";
+import { UserCreatorUseCase } from "../../domain";
 
 const { CREATED, OK } = StatusCodes;
 

@@ -82,8 +82,8 @@
       "@routes/*": [
         "src/routes/*"
       ],
-      "@adapters/*": [
-        "src/adapters/*"
+      "@test/*": [
+        "src/test/*"
       ]
     },
     "useUnknownInCatchVariables": false
