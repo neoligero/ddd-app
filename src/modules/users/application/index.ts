@@ -1,2 +1,2 @@
 export * from './userCreatorUseCase';
-// export * from './getUserUseCase';
+export * from './userRetrieverUseCase';

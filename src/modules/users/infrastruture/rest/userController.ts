@@ -2,14 +2,15 @@ import "reflect-metadata";
 import { Response, Request, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { inject, injectable } from "inversify";
-import { UserCreatorUseCase } from "../../domain";
+import { UserCreatorUseCase, UserRetrieverUseCase } from "../../domain";
 
-const { CREATED, OK } = StatusCodes;
+const { CREATED, OK, NOT_FOUND } = StatusCodes;
 
 @injectable()
 export class UserController {
   constructor(
-    @inject('UserCreator') private userCreator: UserCreatorUseCase
+    @inject('UserCreator') private userCreator: UserCreatorUseCase,
+    @inject('UserRetriever') private userRetriever: UserRetrieverUseCase,
   ) { }
 
   async createUser(req: Request, res: Response, next: NextFunction) {
@@ -23,8 +24,11 @@ export class UserController {
 
   async getUser(req: Request, res: Response, next: NextFunction) {
     try {
-      // const userCreated = await this.usecase.invoke(user);
-      return res.status(OK).json('Hello');
+      const user = await this.userRetriever.invoke(req.params);
+      if (!user) {
+        return res.status(NOT_FOUND).json(user);
+      }
+      return res.status(OK).json(user);
     } catch (err) {
       next(err);
     }

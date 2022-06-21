@@ -20,7 +20,7 @@ describe('user-router', () => {
   const getUserPath = `${ usersPath }/`;
   const addUsersPath = `${ usersPath }/`;
 
-  const { BAD_REQUEST, CREATED, OK } = StatusCodes;
+  const { BAD_REQUEST, CREATED, OK, NOT_FOUND } = StatusCodes;
   let agent: SuperTest<Test>;
 
   beforeAll((done) => {
@@ -38,13 +38,13 @@ describe('user-router', () => {
       return agent.post(addUsersPath).type('form').send(reqBody);
     };
 
-    const userData = {
-      name: 'username',
-      email: `${ getRandomString(10) }@gmail.com`,
-      password: '123456'
-    };
-
     it(`should return a status code of "${ CREATED }" if the request was successful.`, (done) => {
+      const userData = {
+        name: 'username',
+        email: `${ getRandomString(10) }@gmail.com`,
+        password: '123456'
+      };
+
       callApi(userData)
         .end((err: Error, res: Response) => {
           expect(res.status).toBe(CREATED);
@@ -68,11 +68,59 @@ describe('user-router', () => {
         });
     });
 
-    it(`Returns ${ BAD_REQUEST } if the user already exists`, (done) => {
-      callApi(userData)
+    it(`Returns ${ BAD_REQUEST } if the user already exists`, async () => {
+      const userData = {
+        name: 'username',
+        email: `${ getRandomString(10) }@gmail.com`,
+        password: '123456'
+      };
+
+      await callApi(userData).then(() => {
+        callApi(userData)
+          .end((err: Error, res: Response) => {
+            expect(res.status).toBe(BAD_REQUEST);
+          });
+      });
+
+
+    });
+
+  });
+
+  describe(`"GET:${ addUsersPath }:userId"`, () => {
+
+    const callApi = (userId: string) => {
+      return agent.get(`${ getUserPath }${ userId }`);
+    }
+
+    const userData = {
+      name: 'username',
+      email: `${ getRandomString(10) }@gmail.com`,
+      password: '123456'
+    };
+
+    it(`should return a status code of "${ OK }" if the request was successful.`, async () => {
+      const response = await agent.post(addUsersPath).type('form').send(userData);
+
+      callApi(response.body._id)
         .end((err: Error, res: Response) => {
-          expect(res.status).toBe(BAD_REQUEST);
-          done();
+          expect(res.status).toBe(OK);
+          expect(res.body).toEqual(
+            jasmine.objectContaining({
+              name: userData.name,
+              email: userData.email,
+              password: userData.password,
+            })
+          );
+          expect(res.body.error).toBeUndefined();
+        });
+    });
+
+    it(`should return a status code of "${ NOT_FOUND }" if the user doesnt exists.`, () => {
+      callApi(IdGenerator.generate())
+        .end((err: Error, res: Response) => {
+          expect(res.status).toBe(NOT_FOUND);
+          expect(res.body).toEqual(null);
         });
     });
 
